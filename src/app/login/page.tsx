@@ -27,10 +27,12 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        window.location.href = "/dashboard";
-      } else {
-        setMessage(data.error || "Invalid email or password.");
-      }
+  alert("Login successful");
+  window.location.href = "/dashboard";
+} else {
+  alert(JSON.stringify(data));
+  setMessage(data.error || "Invalid email or password.");
+}
     } finally {
       setLoading(false);
     }
