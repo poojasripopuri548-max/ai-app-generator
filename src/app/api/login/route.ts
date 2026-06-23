@@ -18,7 +18,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!isPasswordCorrect) {
       return NextResponse.json(
@@ -27,12 +30,19 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!process.env.JWT_SECRET) {
+      return NextResponse.json(
+        { error: "JWT_SECRET missing" },
+        { status: 500 }
+      );
+    }
+
     const token = jwt.sign(
       {
         id: user.id,
         email: user.email,
       },
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -40,8 +50,11 @@ export async function POST(req: Request) {
       message: "Login successful",
     });
 
-    response.cookies.set("token", token, {
+    response.cookies.set({
+      name: "token",
+      value: token,
       httpOnly: true,
+      secure: true,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
