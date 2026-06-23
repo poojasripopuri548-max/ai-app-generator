@@ -1,0 +1,97 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+
+export default function SignupPage() {
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage("Account created. You can login now.");
+        setForm({ name: "", email: "", password: "" });
+      } else {
+        setMessage(typeof data.error === "string" ? data.error : "Please check the form and try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 text-slate-950">
+      <form onSubmit={handleSubmit} className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">AI App Generator</p>
+        <h1 className="mt-2 text-3xl font-semibold">Create Account</h1>
+        <p className="mt-2 text-sm text-slate-600">Create a workspace for your generated applications.</p>
+
+        <div className="mt-6 grid gap-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+            className="h-11 rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-900"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="h-11 rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-900"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="h-11 rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-900"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 text-sm font-semibold text-white hover:bg-slate-800 disabled:bg-slate-400"
+        >
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          Sign Up
+        </button>
+
+        {message ? <p className="mt-4 text-sm text-slate-600">{message}</p> : null}
+
+        <p className="mt-6 text-center text-sm text-slate-600">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-slate-950 hover:underline">
+            Login
+          </Link>
+        </p>
+      </form>
+    </main>
+  );
+}
