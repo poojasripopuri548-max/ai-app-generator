@@ -12,19 +12,21 @@ export interface AIProject {
 const STORAGE_KEY = "ai_app_generator_projects";
 
 /**
- * Check if localStorage is available.
+ * Safe access to localStorage.
+ * Prevents SecurityError inside sandboxed iframes.
  */
-function isStorageAvailable(): boolean {
-  if (typeof window === "undefined") return false;
+function getStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
 
   try {
-    const test = "__storage_test__";
-    window.localStorage.setItem(test, test);
-    window.localStorage.removeItem(test);
-    return true;
-  } catch (error) {
-    console.error("localStorage unavailable:", error);
-    return false;
+    // Don't allow storage access inside iframe previews
+    if (window.self !== window.top) {
+      return null;
+    }
+
+    return window.localStorage;
+  } catch {
+    return null;
   }
 }
 
@@ -49,10 +51,12 @@ function generateId(): string {
  * Load all projects
  */
 export function loadProjects(): AIProject[] {
-  if (!isStorageAvailable()) return [];
+  const storage = getStorage();
+
+  if (!storage) return [];
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = storage.getItem(STORAGE_KEY);
 
     if (!raw) return [];
 
@@ -67,10 +71,12 @@ export function loadProjects(): AIProject[] {
  * Save all projects
  */
 export function saveProjects(projects: AIProject[]): boolean {
-  if (!isStorageAvailable()) return false;
+  const storage = getStorage();
+
+  if (!storage) return false;
 
   try {
-    window.localStorage.setItem(
+    storage.setItem(
       STORAGE_KEY,
       JSON.stringify(projects)
     );
@@ -135,9 +141,9 @@ export function updateProject(
       updatedAt: Date.now(),
     };
 
-    saveProjects(projects);
+    const success = saveProjects(projects);
 
-    return projects[index];
+    return success ? projects[index] : null;
   } catch (error) {
     console.error("Update failed:", error);
     return null;
@@ -153,9 +159,7 @@ export function deleteProject(id: string): boolean {
 
     const filtered = projects.filter((p) => p.id !== id);
 
-    saveProjects(filtered);
-
-    return true;
+    return saveProjects(filtered);
   } catch (error) {
     console.error("Delete failed:", error);
     return false;
@@ -186,9 +190,9 @@ export function duplicateProject(id: string): AIProject | null {
 
     projects.unshift(duplicate);
 
-    saveProjects(projects);
+    const success = saveProjects(projects);
 
-    return duplicate;
+    return success ? duplicate : null;
   } catch (error) {
     console.error("Duplicate failed:", error);
     return null;
