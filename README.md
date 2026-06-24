@@ -2,7 +2,7 @@
 
 An AI-powered web application that enables users to generate dynamic applications, forms, and dashboards using natural language prompts. The platform converts user requirements into structured UI components and interactive interfaces, providing a fast and intuitive app-building experience.
 
-🌐 **Live Demo:** https://ai-app-generator-flame.vercel.app/
+🌐 **Live Demo:** https://ai-app-generator-taupe.vercel.app/
 
 ---
 
