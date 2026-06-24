@@ -15,13 +15,15 @@ type TabMode = "chat" | "code";
 export default function AIEditorPage() {
   const router = useRouter();
   const [generatedCode, setGeneratedCode] = useState("");
+  const [generatedJson, setGeneratedJson] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [activeTab, setActiveTab] = useState<TabMode>("chat");
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [projectName, setProjectName] = useState("AI Generated App");
 
-  const handleCodeGenerated = useCallback((code: string) => {
+  const handleCodeGenerated = useCallback((code: string, json: string) => {
     setGeneratedCode(code);
+    setGeneratedJson(json);
     // Auto-switch to preview when code is generated
     setViewMode("preview");
   }, []);
