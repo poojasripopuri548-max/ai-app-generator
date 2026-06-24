@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, Database, FileJson, ShieldCheck, Workflow } from "lucide-react";
+import { ArrowRight, Bot, Database, FileJson, ShieldCheck, Workflow, Sparkles } from "lucide-react";
 
 const features = [
+  { icon: Sparkles, label: "AI Chat Interface", text: "Describe your app in plain English and watch it come to life. Streaming responses, instant preview." },
   { icon: FileJson, label: "Metadata UI", text: "Forms, tables, dashboards, and layouts generated from JSON." },
   { icon: Database, label: "Runtime Data", text: "User-scoped records stored through Prisma and PostgreSQL." },
   { icon: Workflow, label: "Workflows", text: "Create and delete events trigger integrated notifications." },
   { icon: ShieldCheck, label: "Resilience", text: "Unknown components and invalid fields fail gracefully." },
+  { icon: Bot, label: "Project Management", text: "Save, rename, duplicate, and manage multiple projects. Export as ZIP." },
 ];
 
 const codeSample = [
@@ -31,6 +33,14 @@ export default function Home() {
             dynamic records, CSV import, workflow notifications, and defensive validation.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/ai-editor"
+              className="inline-flex h-11 items-center gap-2 rounded-lg bg-cyan-300 px-5 text-sm font-semibold text-slate-950 hover:bg-cyan-200"
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Chat
+              <ArrowRight className="h-4 w-4" />
+            </Link>
             <Link
               href="/editor"
               className="inline-flex h-11 items-center gap-2 rounded-lg bg-white px-5 text-sm font-semibold text-slate-950 hover:bg-slate-100"
