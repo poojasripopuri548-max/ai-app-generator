@@ -51,21 +51,28 @@ export default function ProjectManager({
     setProjects(loadProjects());
   }
 
-  function handleCreate() {
-    if (!currentCode.trim()) return;
-    setIsCreating(true);
+ function handleCreate() {
+  if (!currentCode.trim()) return;
 
-    // Small delay for UX
-    setTimeout(() => {
-      const project = createProject(
-        `Project ${projects.length + 1}`,
-        currentCode
-      );
-      onSetActiveProject(project.id);
-      refresh();
+  setIsCreating(true);
+
+  setTimeout(() => {
+    const project = createProject(
+      `Project ${projects.length + 1}`,
+      currentCode
+    );
+
+    if (!project) {
+      alert("Failed to save project.");
       setIsCreating(false);
-    }, 300);
-  }
+      return;
+    }
+
+    onSetActiveProject(project.id);
+    refresh();
+    setIsCreating(false);
+  }, 300);
+}
 
   function handleSave() {
     if (!activeProjectId || !currentCode.trim()) return;
